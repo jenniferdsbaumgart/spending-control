@@ -96,6 +96,12 @@ export interface TransactionWithRelations {
             color: string | null;
         };
     } | null;
+    incomeCategory: {
+        id: string;
+        name: string;
+        icon: string | null;
+        color: string | null;
+    } | null;
     installmentPlan: {
         id: string;
         description: string;

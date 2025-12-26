@@ -112,7 +112,33 @@ async function main() {
             },
         });
     }
-    console.log("✅ Created categories");
+    console.log("✅ Created expense categories");
+
+    // Create income categories
+    const incomeCategories = [
+        { id: "income-salary", name: "Salário", icon: "💼", color: "#22c55e" },
+        { id: "income-freelance", name: "Freelance", icon: "💻", color: "#3b82f6" },
+        { id: "income-investments", name: "Investimentos", icon: "📈", color: "#8b5cf6" },
+        { id: "income-gift", name: "Presente", icon: "🎁", color: "#ec4899" },
+        { id: "income-refund", name: "Reembolso", icon: "↩️", color: "#f97316" },
+        { id: "income-bonus", name: "Bônus", icon: "🏆", color: "#eab308" },
+        { id: "income-other", name: "Outros", icon: "📦", color: "#6b7280" },
+    ];
+
+    for (const cat of incomeCategories) {
+        await prisma.incomeCategory.upsert({
+            where: { id: cat.id },
+            update: {},
+            create: {
+                id: cat.id,
+                workspaceId: workspace.id,
+                name: cat.name,
+                icon: cat.icon,
+                color: cat.color,
+            },
+        });
+    }
+    console.log("✅ Created income categories");
 
     // Create accounts
     const bank = await prisma.financialAccount.upsert({
@@ -164,6 +190,7 @@ async function main() {
             description: "Salário",
             status: "POSTED",
             accountId: bank.id,
+            incomeCategoryId: "income-salary",
         },
     });
 

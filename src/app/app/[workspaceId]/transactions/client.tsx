@@ -39,12 +39,14 @@ import type {
     BudgetGroupWithCategories,
     TransactionType,
 } from "@/types";
+import type { IncomeCategoryInfo } from "@/server/actions/income-categories";
 
 interface TransactionsClientProps {
     workspaceId: string;
     initialTransactions: TransactionWithRelations[];
     accounts: FinancialAccountInfo[];
     budgetGroups: BudgetGroupWithCategories[];
+    incomeCategories: IncomeCategoryInfo[];
 }
 
 type PeriodFilter = "all" | "today" | "week" | "month" | "year" | "custom";
@@ -55,6 +57,7 @@ export function TransactionsClient({
     initialTransactions,
     accounts,
     budgetGroups,
+    incomeCategories,
 }: TransactionsClientProps) {
     const [modalOpen, setModalOpen] = useState(false);
     const [modalType, setModalType] = useState<TransactionType>("EXPENSE");
@@ -611,6 +614,7 @@ export function TransactionsClient({
                 type={modalType}
                 accounts={accounts}
                 budgetGroups={budgetGroups}
+                incomeCategories={incomeCategories}
             />
         </div>
     );

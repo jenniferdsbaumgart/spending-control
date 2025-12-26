@@ -14,6 +14,7 @@ const createTransactionSchema = z.object({
     description: z.string().optional(),
     accountId: z.string().min(1, "Account is required"),
     categoryId: z.string().optional(),
+    incomeCategoryId: z.string().optional(),
     status: z.enum(["POSTED", "PLANNED"]).default("POSTED"),
 });
 
@@ -70,6 +71,9 @@ export async function getTransactions(
                         },
                     },
                 },
+                incomeCategory: {
+                    select: { id: true, name: true, icon: true, color: true },
+                },
                 installmentPlan: {
                     select: { id: true, description: true, installmentsCount: true },
                 },
@@ -86,6 +90,7 @@ export async function getTransactions(
             status: t.status,
             account: t.account,
             category: t.category,
+            incomeCategory: t.incomeCategory,
             installmentPlan: t.installmentPlan,
             installmentNumber: t.installmentNumber,
         }));
@@ -127,7 +132,8 @@ export async function createTransaction(
                 type: validated.type,
                 description: validated.description,
                 accountId: validated.accountId,
-                categoryId: validated.categoryId,
+                categoryId: validated.type === "EXPENSE" ? validated.categoryId : null,
+                incomeCategoryId: validated.type === "INCOME" ? validated.incomeCategoryId : null,
                 status: validated.status,
             },
         });

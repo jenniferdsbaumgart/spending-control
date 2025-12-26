@@ -76,14 +76,15 @@ model Workspace {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  members          WorkspaceMember[]
-  budgetGroups     BudgetGroup[]
-  categories       BudgetCategory[]
+  members           WorkspaceMember[]
+  budgetGroups      BudgetGroup[]
+  categories        BudgetCategory[]
+  incomeCategories  IncomeCategory[]
   financialAccounts FinancialAccount[]
-  transactions     Transaction[]
-  monthlyPlans     MonthlyBudgetPlan[]
-  goals            Goal[]
-  installmentPlans InstallmentPlan[]
+  transactions      Transaction[]
+  monthlyPlans      MonthlyBudgetPlan[]
+  goals             Goal[]
+  installmentPlans  InstallmentPlan[]
 }
 
 model WorkspaceMember {
@@ -146,6 +147,24 @@ model BudgetCategory {
 
   @@index([workspaceId])
   @@index([groupId])
+}
+
+// Income categories (salary, freelance, gifts, etc.)
+model IncomeCategory {
+  id        String   @id @default(cuid())
+  name      String
+  icon      String?
+  color     String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  transactions Transaction[]
+
+  @@index([workspaceId])
 }
 
 // ============================================================================
@@ -227,8 +246,13 @@ model Transaction {
   accountId String
   account   FinancialAccount @relation(fields: [accountId], references: [id])
 
+  // For expenses - links to budget category
   categoryId String?
   category   BudgetCategory? @relation(fields: [categoryId], references: [id])
+
+  // For income - links to income category
+  incomeCategoryId String?
+  incomeCategory   IncomeCategory? @relation(fields: [incomeCategoryId], references: [id])
 
   // For installments - links to parent plan
   installmentPlanId String?
@@ -239,6 +263,7 @@ model Transaction {
   @@index([workspaceId, date])
   @@index([accountId])
   @@index([categoryId])
+  @@index([incomeCategoryId])
 }
 
 enum TransactionType {
