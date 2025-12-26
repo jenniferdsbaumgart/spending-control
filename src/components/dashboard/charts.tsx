@@ -10,7 +10,8 @@ interface ChartsProps {
     currency?: string;
 }
 
-const COLORS = ["#8b5cf6", "#ec4899", "#3b82f6", "#10b981", "#f59e0b", "#ef4444"];
+// Turquoise/Cool Palette
+const COLORS = ["#2dd4bf", "#38bdf8", "#818cf8", "#c084fc", "#22d3ee", "#f472b6"];
 
 export function SpendingByGroupChart({ budgets, currency = "BRL" }: ChartsProps) {
     const data = budgets
@@ -23,21 +24,21 @@ export function SpendingByGroupChart({ budgets, currency = "BRL" }: ChartsProps)
 
     if (data.length === 0) {
         return (
-            <Card className="bg-slate-900/50 border-slate-800">
+            <Card className="glass-card border-border">
                 <CardHeader>
-                    <CardTitle className="text-lg text-white">Gastos por Grupo</CardTitle>
+                    <CardTitle className="text-lg text-foreground">Gastos por Grupo</CardTitle>
                 </CardHeader>
                 <CardContent className="h-[300px] flex items-center justify-center">
-                    <p className="text-slate-400">Sem despesas neste mês</p>
+                    <p className="text-muted-foreground">Sem despesas neste mês</p>
                 </CardContent>
             </Card>
         );
     }
 
     return (
-        <Card className="bg-slate-900/50 border-slate-800">
+        <Card className="glass-card border-border">
             <CardHeader>
-                <CardTitle className="text-lg text-white">Gastos por Grupo</CardTitle>
+                <CardTitle className="text-lg text-foreground">Gastos por Grupo</CardTitle>
             </CardHeader>
             <CardContent className="h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
@@ -60,9 +61,9 @@ export function SpendingByGroupChart({ budgets, currency = "BRL" }: ChartsProps)
                                 if (active && payload && payload.length) {
                                     const data = payload[0].payload;
                                     return (
-                                        <div className="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2">
-                                            <p className="text-white font-medium">{data.name}</p>
-                                            <p className="text-slate-300">
+                                        <div className="bg-popover border border-border rounded-lg px-3 py-2 shadow-lg">
+                                            <p className="text-popover-foreground font-medium">{data.name}</p>
+                                            <p className="text-muted-foreground">
                                                 {formatCurrency(data.value, currency as "BRL")}
                                             </p>
                                         </div>
@@ -72,7 +73,7 @@ export function SpendingByGroupChart({ budgets, currency = "BRL" }: ChartsProps)
                             }}
                         />
                         <Legend
-                            formatter={(value) => <span className="text-slate-300">{value}</span>}
+                            formatter={(value) => <span className="text-muted-foreground">{value}</span>}
                         />
                     </PieChart>
                 </ResponsiveContainer>

@@ -46,12 +46,12 @@ export function SummaryCards({ income, expenses, balance, currency = "BRL" }: Su
                 <Card
                     key={card.title}
                     className={cn(
-                        "bg-slate-900/50 border",
+                        "glass-card border-border",
                         card.borderColor
                     )}
                 >
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium text-slate-400">
+                        <CardTitle className="text-sm font-medium text-muted-foreground">
                             {card.title}
                         </CardTitle>
                         <div className={cn("p-2 rounded-lg", card.bgColor)}>
