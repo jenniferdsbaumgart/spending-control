@@ -26,7 +26,7 @@ export function Header({ title, showMonthNav, yearMonth, actions }: HeaderProps)
     }
 
     return (
-        <header className="bg-slate-900/50 backdrop-blur-sm border-b border-slate-800 px-6 py-4">
+        <header className="bg-background/80 backdrop-blur-sm border-b border-border px-6 py-4">
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                     {showMonthNav && (
@@ -34,18 +34,18 @@ export function Header({ title, showMonthNav, yearMonth, actions }: HeaderProps)
                             <Button
                                 variant="ghost"
                                 size="icon"
-                                className="text-slate-400 hover:text-white hover:bg-slate-800"
+                                className="text-muted-foreground hover:text-foreground hover:bg-accent"
                                 onClick={() => navigateMonth("prev")}
                             >
                                 <ChevronLeft className="h-5 w-5" />
                             </Button>
-                            <h1 className="text-xl font-semibold text-white min-w-[180px] text-center capitalize">
+                            <h1 className="text-xl font-semibold text-foreground min-w-[180px] text-center capitalize">
                                 {formatMonth(currentYearMonth, "pt-BR")}
                             </h1>
                             <Button
                                 variant="ghost"
                                 size="icon"
-                                className="text-slate-400 hover:text-white hover:bg-slate-800"
+                                className="text-muted-foreground hover:text-foreground hover:bg-accent"
                                 onClick={() => navigateMonth("next")}
                             >
                                 <ChevronRight className="h-5 w-5" />
@@ -53,7 +53,7 @@ export function Header({ title, showMonthNav, yearMonth, actions }: HeaderProps)
                         </div>
                     )}
                     {title && !showMonthNav && (
-                        <h1 className="text-xl font-semibold text-white">{title}</h1>
+                        <h1 className="text-xl font-semibold text-foreground">{title}</h1>
                     )}
                 </div>
                 {actions && <div className="flex items-center gap-3">{actions}</div>}
@@ -81,7 +81,7 @@ export function QuickActions({ onAddIncome, onAddExpense }: QuickActionsProps) {
             </Button>
             <Button
                 size="sm"
-                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                className="bg-gradient-to-r from-primary to-teal-400 hover:from-primary/90 hover:to-teal-500 text-primary-foreground"
                 onClick={onAddExpense}
             >
                 <Plus className="h-4 w-4 mr-1" />

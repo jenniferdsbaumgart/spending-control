@@ -70,14 +70,14 @@ export function Sidebar() {
     }
 
     return (
-        <aside className="w-64 bg-slate-900 border-r border-slate-800 h-screen flex flex-col">
+        <aside className="w-64 bg-sidebar border-r border-sidebar-border h-screen flex flex-col">
             {/* Logo */}
-            <div className="p-6 border-b border-slate-800">
+            <div className="p-6 border-b border-sidebar-border">
                 <Link href={`/app/${workspaceId}`} className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-                        <span className="text-white font-bold text-lg">$</span>
+                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-teal-400 flex items-center justify-center">
+                        <span className="text-primary-foreground font-bold text-lg">$</span>
                     </div>
-                    <span className="text-white font-semibold text-lg">Spending Control</span>
+                    <span className="text-sidebar-foreground font-semibold text-lg">Spending Control</span>
                 </Link>
             </div>
 
@@ -92,8 +92,8 @@ export function Sidebar() {
                             className={cn(
                                 "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
                                 isActive
-                                    ? "bg-purple-500/20 text-purple-400"
-                                    : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                                    ? "bg-sidebar-accent text-sidebar-primary"
+                                    : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                             )}
                         >
                             {item.icon}
@@ -104,10 +104,10 @@ export function Sidebar() {
             </nav>
 
             {/* Logout */}
-            <div className="p-4 border-t border-slate-800">
+            <div className="p-4 border-t border-sidebar-border">
                 <Button
                     variant="ghost"
-                    className="w-full justify-start text-slate-400 hover:text-white hover:bg-slate-800"
+                    className="w-full justify-start text-sidebar-foreground hover:text-sidebar-accent-foreground hover:bg-sidebar-accent"
                     onClick={handleLogout}
                 >
                     <LogOut className="h-5 w-5 mr-3" />
