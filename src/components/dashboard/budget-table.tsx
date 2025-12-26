@@ -1,7 +1,6 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { formatCurrency, formatPercent } from "@/lib/currency";
 import { cn } from "@/lib/utils";
 import type { MonthlyBudgetSummary } from "@/types";
@@ -64,22 +63,7 @@ export function BudgetTable({ budgets, currency = "BRL" }: BudgetTableProps) {
                                     </span>
                                 </div>
                             </div>
-                            <div className="relative">
-                                <Progress
-                                    value={progressPercent}
-                                    className="h-2"
-                                    style={{
-                                        // Use CSS variable to pass color to progress bar
-                                        ["--progress-color" as string]: isOverBudget ? "hsl(var(--destructive))" : groupColor,
-                                    }}
-                                />
-                                <style jsx>{`
-                  :global(.progress-indicator) {
-                    background-color: var(--progress-color) !important;
-                  }
-                `}</style>
-                            </div>
-                            {/* Custom progress bar with dynamic color */}
+                            {/* Progress bar with dynamic colour */}
                             <div className="h-2 rounded-full bg-secondary overflow-hidden">
                                 <div
                                     className="h-full rounded-full transition-all duration-300"
