@@ -336,3 +336,91 @@ export async function deleteCategory(
         return { success: false, error: "Failed to delete category" };
     }
 }
+
+/**
+ * Move a category to a different budget group
+ */
+export async function moveCategory(
+    workspaceId: string,
+    categoryId: string,
+    newGroupId: string
+): Promise<ActionResponse> {
+    try {
+        const user = await getCurrentUser();
+        const { role } = await requireWorkspaceRole(user.id, workspaceId, "ADMIN");
+
+        if (!canAdmin(role)) {
+            return { success: false, error: "Admin role required" };
+        }
+
+        // Verify category belongs to workspace
+        const category = await prisma.budgetCategory.findFirst({
+            where: { id: categoryId, workspaceId },
+        });
+
+        if (!category) {
+            return { success: false, error: "Category not found" };
+        }
+
+        // Verify new group belongs to workspace
+        const newGroup = await prisma.budgetGroup.findFirst({
+            where: { id: newGroupId, workspaceId, isActive: true },
+        });
+
+        if (!newGroup) {
+            return { success: false, error: "Target group not found" };
+        }
+
+        await prisma.budgetCategory.update({
+            where: { id: categoryId },
+            data: { groupId: newGroupId },
+        });
+
+        revalidatePath(`/app/${workspaceId}/budgets`);
+        revalidatePath(`/app/${workspaceId}`);
+        return { success: true };
+    } catch (error) {
+        console.error("Error moving category:", error);
+        return { success: false, error: "Failed to move category" };
+    }
+}
+
+/**
+ * Update budget group color
+ */
+export async function updateGroupColor(
+    workspaceId: string,
+    groupId: string,
+    color: string
+): Promise<ActionResponse> {
+    try {
+        const user = await getCurrentUser();
+        const { role } = await requireWorkspaceRole(user.id, workspaceId, "ADMIN");
+
+        if (!canAdmin(role)) {
+            return { success: false, error: "Admin role required" };
+        }
+
+        // Verify group belongs to workspace
+        const existing = await prisma.budgetGroup.findFirst({
+            where: { id: groupId, workspaceId },
+        });
+
+        if (!existing) {
+            return { success: false, error: "Budget group not found" };
+        }
+
+        await prisma.budgetGroup.update({
+            where: { id: groupId },
+            data: { color },
+        });
+
+        revalidatePath(`/app/${workspaceId}/budgets`);
+        revalidatePath(`/app/${workspaceId}`);
+        return { success: true };
+    } catch (error) {
+        console.error("Error updating group color:", error);
+        return { success: false, error: "Failed to update color" };
+    }
+}
+
