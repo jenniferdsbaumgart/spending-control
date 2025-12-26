@@ -137,15 +137,15 @@ export function TransactionsClient({
             }
 
             // Account filter
-            if (accountFilter !== "all" && transaction.accountId !== accountFilter) {
+            if (accountFilter !== "all" && transaction.account.id !== accountFilter) {
                 return false;
             }
 
             // Category filter
             if (categoryFilter !== "all") {
                 if (categoryFilter === "uncategorized") {
-                    if (transaction.categoryId) return false;
-                } else if (transaction.categoryId !== categoryFilter) {
+                    if (transaction.category) return false;
+                } else if (transaction.category?.id !== categoryFilter) {
                     return false;
                 }
             }
