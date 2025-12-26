@@ -96,7 +96,7 @@ export function InstallmentsClient({
                 actions={
                     <Button
                         size="sm"
-                        className="bg-gradient-to-r from-purple-500 to-pink-500"
+                        className="bg-gradient-to-r from-primary to-teal-400 text-primary-foreground"
                         onClick={() => setCreateOpen(true)}
                     >
                         <Plus className="h-4 w-4 mr-1" />
@@ -107,20 +107,20 @@ export function InstallmentsClient({
 
             <div className="flex-1 p-6 overflow-auto">
                 {plans.length === 0 ? (
-                    <Card className="bg-slate-900/50 border-slate-800">
+                    <Card className="glass-card border-border">
                         <CardContent className="py-16 text-center">
-                            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-800 flex items-center justify-center">
-                                <CreditCard className="h-8 w-8 text-slate-500" />
+                            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-secondary flex items-center justify-center">
+                                <CreditCard className="h-8 w-8 text-muted-foreground" />
                             </div>
-                            <h3 className="text-lg font-medium text-white mb-2">
+                            <h3 className="text-lg font-medium text-foreground mb-2">
                                 Nenhuma compra parcelada
                             </h3>
-                            <p className="text-slate-400 mb-6">
+                            <p className="text-muted-foreground mb-6">
                                 Registre compras parceladas para acompanhar parcelas futuras.
                             </p>
                             <Button
                                 onClick={() => setCreateOpen(true)}
-                                className="bg-gradient-to-r from-purple-500 to-pink-500"
+                                className="bg-gradient-to-r from-primary to-teal-400 text-primary-foreground"
                             >
                                 <Plus className="h-4 w-4 mr-2" />
                                 Adicionar parcelamento
@@ -130,26 +130,26 @@ export function InstallmentsClient({
                 ) : (
                     <div className="space-y-4">
                         {plans.map((plan) => (
-                            <Card key={plan.id} className="bg-slate-900/50 border-slate-800">
+                            <Card key={plan.id} className="glass-card border-border">
                                 <CardHeader>
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <CardTitle className="text-lg text-white">{plan.description}</CardTitle>
+                                            <CardTitle className="text-lg text-foreground">{plan.description}</CardTitle>
                                             {plan.merchant && (
-                                                <p className="text-sm text-slate-400">{plan.merchant}</p>
+                                                <p className="text-sm text-muted-foreground">{plan.merchant}</p>
                                             )}
                                         </div>
                                         <div className="text-right">
-                                            <p className="text-lg font-semibold text-white">
+                                            <p className="text-lg font-semibold text-foreground">
                                                 {formatCurrency(plan.totalAmount)}
                                             </p>
                                             <Badge
                                                 variant="outline"
                                                 className={cn(
-                                                    "border-slate-700",
+                                                    "border-border",
                                                     plan.remainingCount === 0
                                                         ? "text-green-400 border-green-500/30"
-                                                        : "text-slate-400"
+                                                        : "text-muted-foreground"
                                                 )}
                                             >
                                                 {plan.paidCount}/{plan.installmentsCount} pagas
@@ -166,19 +166,19 @@ export function InstallmentsClient({
                                                     "flex items-center justify-between p-3 rounded-lg",
                                                     transaction.status === "POSTED"
                                                         ? "bg-green-500/10 border border-green-500/20"
-                                                        : "bg-slate-800/50"
+                                                        : "bg-background/40 hover:bg-muted/50 transition-colors"
                                                 )}
                                             >
                                                 <div>
-                                                    <p className="text-white font-medium">
+                                                    <p className="text-foreground font-medium">
                                                         Parcela {transaction.installmentNumber}
                                                     </p>
-                                                    <p className="text-sm text-slate-400">
+                                                    <p className="text-sm text-muted-foreground">
                                                         {formatDate(transaction.date, "dd MMM yyyy")}
                                                     </p>
                                                 </div>
                                                 <div className="flex items-center gap-2">
-                                                    <span className="text-slate-300">
+                                                    <span className="text-muted-foreground">
                                                         {formatCurrency(transaction.amount)}
                                                     </span>
                                                     {transaction.status === "POSTED" ? (
@@ -187,7 +187,7 @@ export function InstallmentsClient({
                                                         <Button
                                                             size="sm"
                                                             variant="ghost"
-                                                            className="text-slate-400 hover:text-white"
+                                                            className="text-muted-foreground hover:text-foreground hover:bg-muted"
                                                             onClick={() => handlePost(transaction.id)}
                                                         >
                                                             Pagar
@@ -206,70 +206,70 @@ export function InstallmentsClient({
 
             {/* Create Modal */}
             <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-                <DialogContent className="bg-slate-900 border-slate-800">
+                <DialogContent className="glass-card border-border">
                     <DialogHeader>
-                        <DialogTitle className="text-white">Nova Compra Parcelada</DialogTitle>
+                        <DialogTitle className="text-foreground">Nova Compra Parcelada</DialogTitle>
                     </DialogHeader>
                     <form onSubmit={handleCreate} className="space-y-4">
                         <div className="space-y-2">
-                            <Label className="text-slate-300">Descrição</Label>
+                            <Label className="text-foreground">Descrição</Label>
                             <Input
                                 name="description"
                                 placeholder="Ex: TV Samsung 55"
-                                className="bg-slate-800 border-slate-700 text-white"
+                                className="bg-background/20 border-border text-foreground"
                                 required
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label className="text-slate-300">Loja (opcional)</Label>
+                            <Label className="text-foreground">Loja (opcional)</Label>
                             <Input
                                 name="merchant"
                                 placeholder="Ex: Magazine Luiza"
-                                className="bg-slate-800 border-slate-700 text-white"
+                                className="bg-background/20 border-border text-foreground"
                             />
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label className="text-slate-300">Valor total</Label>
+                                <Label className="text-foreground">Valor total</Label>
                                 <Input
                                     name="totalAmount"
                                     type="number"
                                     step="0.01"
                                     min="0"
                                     placeholder="2999.00"
-                                    className="bg-slate-800 border-slate-700 text-white"
+                                    className="bg-background/20 border-border text-foreground"
                                     required
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label className="text-slate-300">Parcelas</Label>
+                                <Label className="text-foreground">Parcelas</Label>
                                 <Input
                                     name="installmentsCount"
                                     type="number"
                                     min="2"
                                     max="48"
                                     placeholder="12"
-                                    className="bg-slate-800 border-slate-700 text-white"
+                                    className="bg-background/20 border-border text-foreground"
                                     required
                                 />
                             </div>
                         </div>
                         <div className="space-y-2">
-                            <Label className="text-slate-300">Data da primeira parcela</Label>
+                            <Label className="text-foreground">Data da primeira parcela</Label>
                             <Input
                                 name="firstDueDate"
                                 type="date"
-                                className="bg-slate-800 border-slate-700 text-white"
+                                className="bg-background/20 border-border text-foreground"
                                 required
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label className="text-slate-300">Conta/Cartão</Label>
+                            <Label className="text-foreground">Conta/Cartão</Label>
                             <Select name="accountId" required>
-                                <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
+                                <SelectTrigger className="bg-background/20 border-border text-foreground">
                                     <SelectValue placeholder="Selecione" />
                                 </SelectTrigger>
-                                <SelectContent className="bg-slate-800 border-slate-700">
+                                <SelectContent className="glass-card border-border">
                                     {accounts.map((a) => (
                                         <SelectItem key={a.id} value={a.id} className="text-white">
                                             {a.name}
@@ -279,12 +279,12 @@ export function InstallmentsClient({
                             </Select>
                         </div>
                         <div className="space-y-2">
-                            <Label className="text-slate-300">Categoria</Label>
+                            <Label className="text-foreground">Categoria</Label>
                             <Select name="categoryId" required>
-                                <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
+                                <SelectTrigger className="bg-background/20 border-border text-foreground">
                                     <SelectValue placeholder="Selecione" />
                                 </SelectTrigger>
-                                <SelectContent className="bg-slate-800 border-slate-700">
+                                <SelectContent className="glass-card border-border">
                                     {allCategories.map((c) => (
                                         <SelectItem key={c.id} value={c.id} className="text-white">
                                             {c.groupName} → {c.name}
@@ -298,14 +298,14 @@ export function InstallmentsClient({
                                 type="button"
                                 variant="ghost"
                                 onClick={() => setCreateOpen(false)}
-                                className="text-slate-400"
+                                className="text-muted-foreground hover:text-foreground"
                             >
                                 Cancelar
                             </Button>
                             <Button
                                 type="submit"
                                 disabled={loading}
-                                className="bg-gradient-to-r from-purple-500 to-pink-500"
+                                className="bg-gradient-to-r from-primary to-teal-400 text-primary-foreground"
                             >
                                 {loading ? "Criando..." : "Criar parcelamento"}
                             </Button>

@@ -45,9 +45,9 @@ const roleLabels: Record<Role, string> = {
 };
 
 const roleColors: Record<Role, string> = {
-    ADMIN: "text-purple-400 border-purple-500/30",
+    ADMIN: "text-primary border-primary/30",
     EDITOR: "text-blue-400 border-blue-500/30",
-    VIEWER: "text-slate-400 border-slate-500/30",
+    VIEWER: "text-muted-foreground border-muted-foreground/30",
 };
 
 export function SettingsClient({ workspaceId, workspace, members }: SettingsClientProps) {
@@ -121,18 +121,18 @@ export function SettingsClient({ workspaceId, workspace, members }: SettingsClie
 
             <div className="flex-1 p-6 overflow-auto space-y-6">
                 {/* Workspace Settings */}
-                <Card className="bg-slate-900/50 border-slate-800">
+                <Card className="glass-card border-border">
                     <CardHeader>
-                        <CardTitle className="text-lg text-white">Espaço de Trabalho</CardTitle>
+                        <CardTitle className="text-lg text-foreground">Espaço de Trabalho</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="space-y-2">
-                            <Label className="text-slate-300">Nome do espaço</Label>
+                            <Label className="text-foreground">Nome do espaço</Label>
                             <div className="flex gap-2">
                                 <Input
                                     value={workspaceName}
                                     onChange={(e) => setWorkspaceName(e.target.value)}
-                                    className="bg-slate-800 border-slate-700 text-white"
+                                    className="bg-background/20 border-border text-foreground"
                                     disabled={!isAdmin}
                                 />
                                 {isAdmin && workspaceName !== workspace.name && (
@@ -144,11 +144,11 @@ export function SettingsClient({ workspaceId, workspace, members }: SettingsClie
                 </Card>
 
                 {/* Members */}
-                <Card className="bg-slate-900/50 border-slate-800">
+                <Card className="glass-card border-border">
                     <CardHeader className="flex flex-row items-center justify-between">
                         <div>
-                            <CardTitle className="text-lg text-white">Membros</CardTitle>
-                            <CardDescription className="text-slate-400">
+                            <CardTitle className="text-lg text-foreground">Membros</CardTitle>
+                            <CardDescription className="text-muted-foreground">
                                 Gerencie quem tem acesso a este espaço
                             </CardDescription>
                         </div>
@@ -156,7 +156,7 @@ export function SettingsClient({ workspaceId, workspace, members }: SettingsClie
                             <Button
                                 size="sm"
                                 variant="outline"
-                                className="border-slate-700 text-slate-300"
+                                className="border-border text-muted-foreground hover:bg-muted"
                                 onClick={() => setInviteOpen(true)}
                             >
                                 <UserPlus className="h-4 w-4 mr-2" />
@@ -169,13 +169,13 @@ export function SettingsClient({ workspaceId, workspace, members }: SettingsClie
                             {members.map((member) => (
                                 <div
                                     key={member.id}
-                                    className="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg"
+                                    className="flex items-center justify-between p-3 bg-secondary/30 rounded-lg"
                                 >
                                     <div>
-                                        <p className="text-white font-medium">
+                                        <p className="text-foreground font-medium">
                                             {member.user.name || member.user.email}
                                         </p>
-                                        <p className="text-sm text-slate-400">{member.user.email}</p>
+                                        <p className="text-sm text-muted-foreground">{member.user.email}</p>
                                     </div>
                                     <div className="flex items-center gap-2">
                                         {isAdmin ? (
@@ -183,10 +183,10 @@ export function SettingsClient({ workspaceId, workspace, members }: SettingsClie
                                                 value={member.role}
                                                 onValueChange={(value) => handleRoleChange(member.id, value as Role)}
                                             >
-                                                <SelectTrigger className="w-[140px] bg-slate-800 border-slate-700 text-white">
+                                                <SelectTrigger className="w-[140px] bg-background/20 border-border text-foreground">
                                                     <SelectValue />
                                                 </SelectTrigger>
-                                                <SelectContent className="bg-slate-800 border-slate-700">
+                                                <SelectContent className="glass-card border-border">
                                                     <SelectItem value="ADMIN" className="text-white">
                                                         Administrador
                                                     </SelectItem>
@@ -207,7 +207,7 @@ export function SettingsClient({ workspaceId, workspace, members }: SettingsClie
                                             <Button
                                                 size="icon"
                                                 variant="ghost"
-                                                className="text-slate-400 hover:text-red-400"
+                                                className="text-muted-foreground hover:text-destructive"
                                                 onClick={() => handleRemove(member.id)}
                                             >
                                                 <Trash2 className="h-4 w-4" />
@@ -223,44 +223,44 @@ export function SettingsClient({ workspaceId, workspace, members }: SettingsClie
 
             {/* Invite Modal */}
             <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
-                <DialogContent className="bg-slate-900 border-slate-800">
+                <DialogContent className="glass-card border-border">
                     <DialogHeader>
-                        <DialogTitle className="text-white">Convidar Membro</DialogTitle>
+                        <DialogTitle className="text-foreground">Convidar Membro</DialogTitle>
                     </DialogHeader>
                     <form onSubmit={handleInvite} className="space-y-4">
                         <div className="space-y-2">
-                            <Label className="text-slate-300">E-mail</Label>
+                            <Label className="text-foreground">E-mail</Label>
                             <Input
                                 name="email"
                                 type="email"
                                 placeholder="email@exemplo.com"
-                                className="bg-slate-800 border-slate-700 text-white"
+                                className="bg-background/20 border-border text-foreground"
                                 required
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label className="text-slate-300">Função</Label>
+                            <Label className="text-foreground">Função</Label>
                             <Select name="role" defaultValue="VIEWER">
-                                <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
+                                <SelectTrigger className="bg-background/20 border-border text-foreground">
                                     <SelectValue />
                                 </SelectTrigger>
-                                <SelectContent className="bg-slate-800 border-slate-700">
-                                    <SelectItem value="ADMIN" className="text-white">
+                                <SelectContent className="glass-card border-border">
+                                    <SelectItem value="ADMIN" className="text-foreground">
                                         <div>
                                             <p>Administrador</p>
-                                            <p className="text-xs text-slate-400">Acesso total</p>
+                                            <p className="text-xs text-muted-foreground">Acesso total</p>
                                         </div>
                                     </SelectItem>
-                                    <SelectItem value="EDITOR" className="text-white">
+                                    <SelectItem value="EDITOR" className="text-foreground">
                                         <div>
                                             <p>Editor</p>
-                                            <p className="text-xs text-slate-400">Pode criar e editar</p>
+                                            <p className="text-xs text-muted-foreground">Pode criar e editar</p>
                                         </div>
                                     </SelectItem>
-                                    <SelectItem value="VIEWER" className="text-white">
+                                    <SelectItem value="VIEWER" className="text-foreground">
                                         <div>
                                             <p>Visualizador</p>
-                                            <p className="text-xs text-slate-400">Apenas leitura</p>
+                                            <p className="text-xs text-muted-foreground">Apenas leitura</p>
                                         </div>
                                     </SelectItem>
                                 </SelectContent>
@@ -271,14 +271,14 @@ export function SettingsClient({ workspaceId, workspace, members }: SettingsClie
                                 type="button"
                                 variant="ghost"
                                 onClick={() => setInviteOpen(false)}
-                                className="text-slate-400"
+                                className="text-muted-foreground hover:text-foreground"
                             >
                                 Cancelar
                             </Button>
                             <Button
                                 type="submit"
                                 disabled={loading}
-                                className="bg-gradient-to-r from-purple-500 to-pink-500"
+                                className="bg-gradient-to-r from-primary to-teal-400"
                             >
                                 {loading ? "Convidando..." : "Enviar convite"}
                             </Button>

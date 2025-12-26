@@ -62,7 +62,7 @@ export function TransactionsClient({
                         </Button>
                         <Button
                             size="sm"
-                            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                            className="bg-gradient-to-r from-primary to-teal-400 hover:from-primary/90 hover:to-teal-500 text-primary-foreground"
                             onClick={() => openModal("EXPENSE")}
                         >
                             <Plus className="h-4 w-4 mr-1" />
@@ -74,20 +74,20 @@ export function TransactionsClient({
 
             <div className="flex-1 p-6 overflow-auto">
                 {initialTransactions.length === 0 ? (
-                    <Card className="bg-slate-900/50 border-slate-800">
+                    <Card className="glass-card border-border">
                         <CardContent className="py-16 text-center">
-                            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-800 flex items-center justify-center">
-                                <Receipt className="h-8 w-8 text-slate-500" />
+                            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-secondary flex items-center justify-center">
+                                <Receipt className="h-8 w-8 text-muted-foreground" />
                             </div>
-                            <h3 className="text-lg font-medium text-white mb-2">
+                            <h3 className="text-lg font-medium text-foreground mb-2">
                                 Nenhuma transação ainda
                             </h3>
-                            <p className="text-slate-400 mb-6">
+                            <p className="text-muted-foreground mb-6">
                                 Suas transações aparecerão aqui quando você começar a registrar.
                             </p>
                             <Button
                                 onClick={() => openModal("EXPENSE")}
-                                className="bg-gradient-to-r from-purple-500 to-pink-500"
+                                className="bg-gradient-to-r from-primary to-teal-400 text-primary-foreground"
                             >
                                 <Plus className="h-4 w-4 mr-2" />
                                 Adicionar transação
@@ -95,23 +95,23 @@ export function TransactionsClient({
                         </CardContent>
                     </Card>
                 ) : (
-                    <Card className="bg-slate-900/50 border-slate-800">
+                    <Card className="glass-card border-border">
                         <CardContent className="p-0">
-                            <div className="divide-y divide-slate-800">
+                            <div className="divide-y divide-border">
                                 {initialTransactions.map((transaction) => (
                                     <div
                                         key={transaction.id}
-                                        className="flex items-center justify-between p-4 hover:bg-slate-800/50 transition-colors"
+                                        className="flex items-center justify-between p-4 hover:bg-muted/50 transition-colors"
                                     >
                                         <div className="flex items-center gap-4">
-                                            <div className="w-10 h-10 rounded-lg bg-slate-800 flex items-center justify-center">
+                                            <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center">
                                                 {typeIcons[transaction.type]}
                                             </div>
                                             <div>
-                                                <p className="text-white font-medium">
+                                                <p className="text-foreground font-medium">
                                                     {transaction.description || transaction.category?.name || "Sem descrição"}
                                                 </p>
-                                                <div className="flex items-center gap-2 text-sm text-slate-400">
+                                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                                     <span>{formatDate(transaction.date, "dd MMM yyyy")}</span>
                                                     <span>•</span>
                                                     <span>{transaction.account.name}</span>

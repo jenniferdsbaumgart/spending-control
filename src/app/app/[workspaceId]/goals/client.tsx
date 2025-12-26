@@ -97,7 +97,7 @@ export function GoalsClient({ workspaceId, goals }: GoalsClientProps) {
                 actions={
                     <Button
                         size="sm"
-                        className="bg-gradient-to-r from-purple-500 to-pink-500"
+                        className="bg-gradient-to-r from-primary to-teal-400 text-primary-foreground"
                         onClick={() => setCreateOpen(true)}
                     >
                         <Plus className="h-4 w-4 mr-1" />
@@ -108,20 +108,20 @@ export function GoalsClient({ workspaceId, goals }: GoalsClientProps) {
 
             <div className="flex-1 p-6 overflow-auto">
                 {goals.length === 0 ? (
-                    <Card className="bg-slate-900/50 border-slate-800">
+                    <Card className="glass-card border-border">
                         <CardContent className="py-16 text-center">
-                            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-800 flex items-center justify-center">
-                                <Target className="h-8 w-8 text-slate-500" />
+                            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-secondary flex items-center justify-center">
+                                <Target className="h-8 w-8 text-muted-foreground" />
                             </div>
-                            <h3 className="text-lg font-medium text-white mb-2">
+                            <h3 className="text-lg font-medium text-foreground mb-2">
                                 Nenhuma meta ainda
                             </h3>
-                            <p className="text-slate-400 mb-6">
+                            <p className="text-muted-foreground mb-6">
                                 Crie metas para guardar dinheiro para objetivos específicos.
                             </p>
                             <Button
                                 onClick={() => setCreateOpen(true)}
-                                className="bg-gradient-to-r from-purple-500 to-pink-500"
+                                className="bg-gradient-to-r from-primary to-teal-400 text-primary-foreground"
                             >
                                 <Plus className="h-4 w-4 mr-2" />
                                 Criar meta
@@ -134,12 +134,12 @@ export function GoalsClient({ workspaceId, goals }: GoalsClientProps) {
                             <Card
                                 key={goal.id}
                                 className={cn(
-                                    "bg-slate-900/50 border-slate-800",
+                                    "glass-card border-border",
                                     goal.isCompleted && "border-green-500/30"
                                 )}
                             >
                                 <CardHeader className="pb-2">
-                                    <CardTitle className="text-lg text-white flex items-center justify-between">
+                                    <CardTitle className="text-lg text-foreground flex items-center justify-between">
                                         <span>{goal.name}</span>
                                         {goal.isCompleted && (
                                             <span className="text-green-400 text-sm">✓ Atingida!</span>
@@ -149,10 +149,10 @@ export function GoalsClient({ workspaceId, goals }: GoalsClientProps) {
                                 <CardContent className="space-y-4">
                                     <div>
                                         <div className="flex justify-between text-sm mb-2">
-                                            <span className="text-slate-400">
+                                            <span className="text-muted-foreground">
                                                 {formatCurrency(goal.currentAmount)} de {formatCurrency(goal.targetAmount)}
                                             </span>
-                                            <span className="text-purple-400">
+                                            <span className="text-primary">
                                                 {Math.round(goal.progressPercent)}%
                                             </span>
                                         </div>
@@ -162,19 +162,19 @@ export function GoalsClient({ workspaceId, goals }: GoalsClientProps) {
                                                 "h-2",
                                                 goal.isCompleted
                                                     ? "[&>div]:bg-green-500"
-                                                    : "[&>div]:bg-purple-500"
+                                                    : "[&>div]:bg-primary"
                                             )}
                                         />
                                     </div>
                                     {!goal.isCompleted && (
-                                        <div className="text-sm text-slate-400">
+                                        <div className="text-sm text-muted-foreground">
                                             Faltam: {formatCurrency(goal.remainingAmount)}
                                         </div>
                                     )}
                                     <Button
                                         variant="outline"
                                         size="sm"
-                                        className="w-full border-slate-700 text-slate-300"
+                                        className="w-full border-muted-foreground/30 text-muted-foreground hover:bg-muted"
                                         onClick={() => openContribute(goal)}
                                         disabled={goal.isCompleted}
                                     >
@@ -190,41 +190,41 @@ export function GoalsClient({ workspaceId, goals }: GoalsClientProps) {
 
             {/* Create Goal Modal */}
             <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-                <DialogContent className="bg-slate-900 border-slate-800">
+                <DialogContent className="glass-card border-border">
                     <DialogHeader>
-                        <DialogTitle className="text-white">Nova Meta</DialogTitle>
+                        <DialogTitle className="text-foreground">Nova Meta</DialogTitle>
                     </DialogHeader>
                     <form onSubmit={handleCreate} className="space-y-4">
                         <div className="space-y-2">
-                            <Label className="text-slate-300">Nome da meta</Label>
+                            <Label className="text-foreground">Nome da meta</Label>
                             <Input
                                 name="name"
                                 placeholder="Ex: Fundo de emergência"
-                                className="bg-slate-800 border-slate-700 text-white"
+                                className="bg-background/20 border-border text-foreground"
                                 required
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label className="text-slate-300">Valor alvo</Label>
+                            <Label className="text-foreground">Valor alvo</Label>
                             <Input
                                 name="targetAmount"
                                 type="number"
                                 step="0.01"
                                 min="0"
                                 placeholder="10000.00"
-                                className="bg-slate-800 border-slate-700 text-white"
+                                className="bg-background/20 border-border text-foreground"
                                 required
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label className="text-slate-300">Valor inicial (opcional)</Label>
+                            <Label className="text-foreground">Valor inicial (opcional)</Label>
                             <Input
                                 name="initialAmount"
                                 type="number"
                                 step="0.01"
                                 min="0"
                                 placeholder="0.00"
-                                className="bg-slate-800 border-slate-700 text-white"
+                                className="bg-background/20 border-border text-foreground"
                             />
                         </div>
                         <DialogFooter>
@@ -232,14 +232,14 @@ export function GoalsClient({ workspaceId, goals }: GoalsClientProps) {
                                 type="button"
                                 variant="ghost"
                                 onClick={() => setCreateOpen(false)}
-                                className="text-slate-400"
+                                className="text-muted-foreground hover:text-foreground"
                             >
                                 Cancelar
                             </Button>
                             <Button
                                 type="submit"
                                 disabled={loading}
-                                className="bg-gradient-to-r from-purple-500 to-pink-500"
+                                className="bg-gradient-to-r from-primary to-teal-400 text-primary-foreground"
                             >
                                 {loading ? "Criando..." : "Criar meta"}
                             </Button>
@@ -250,32 +250,32 @@ export function GoalsClient({ workspaceId, goals }: GoalsClientProps) {
 
             {/* Contribute Modal */}
             <Dialog open={contributeOpen} onOpenChange={setContributeOpen}>
-                <DialogContent className="bg-slate-900 border-slate-800">
+                <DialogContent className="glass-card border-border">
                     <DialogHeader>
-                        <DialogTitle className="text-white">
+                        <DialogTitle className="text-foreground">
                             Aporte para: {selectedGoal?.name}
                         </DialogTitle>
                     </DialogHeader>
                     <form onSubmit={handleContribute} className="space-y-4">
                         <div className="space-y-2">
-                            <Label className="text-slate-300">Valor do aporte</Label>
+                            <Label className="text-foreground">Valor do aporte</Label>
                             <Input
                                 name="amount"
                                 type="number"
                                 step="0.01"
                                 min="0"
                                 placeholder="100.00"
-                                className="bg-slate-800 border-slate-700 text-white"
+                                className="bg-background/20 border-border text-foreground"
                                 required
                                 autoFocus
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label className="text-slate-300">Observação (opcional)</Label>
+                            <Label className="text-foreground">Observação (opcional)</Label>
                             <Input
                                 name="note"
                                 placeholder="Ex: Bônus do trabalho"
-                                className="bg-slate-800 border-slate-700 text-white"
+                                className="bg-background/20 border-border text-foreground"
                             />
                         </div>
                         <DialogFooter>
@@ -283,14 +283,14 @@ export function GoalsClient({ workspaceId, goals }: GoalsClientProps) {
                                 type="button"
                                 variant="ghost"
                                 onClick={() => setContributeOpen(false)}
-                                className="text-slate-400"
+                                className="text-muted-foreground hover:text-foreground"
                             >
                                 Cancelar
                             </Button>
                             <Button
                                 type="submit"
                                 disabled={loading}
-                                className="bg-gradient-to-r from-purple-500 to-pink-500"
+                                className="bg-gradient-to-r from-primary to-teal-400 text-primary-foreground"
                             >
                                 {loading ? "Registrando..." : "Registrar aporte"}
                             </Button>
