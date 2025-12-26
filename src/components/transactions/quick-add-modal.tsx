@@ -106,12 +106,12 @@ export function QuickAddModal({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="bg-slate-900 border-slate-800">
+            <DialogContent className="bg-popover border-border">
                 <DialogHeader>
-                    <DialogTitle className="text-white">
+                    <DialogTitle className="text-foreground">
                         {isExpense ? "Adicionar Despesa" : "Adicionar Receita"}
                     </DialogTitle>
-                    <DialogDescription className="text-slate-400">
+                    <DialogDescription className="text-muted-foreground">
                         {isExpense
                             ? "Registre uma nova despesa"
                             : "Registre uma nova receita"}
@@ -119,7 +119,7 @@ export function QuickAddModal({
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="space-y-2">
-                        <Label htmlFor="amount" className="text-slate-300">Valor</Label>
+                        <Label htmlFor="amount" className="text-muted-foreground">Valor</Label>
                         <Input
                             id="amount"
                             type="number"
@@ -128,31 +128,31 @@ export function QuickAddModal({
                             placeholder="0,00"
                             value={amount}
                             onChange={(e) => setAmount(e.target.value)}
-                            className="bg-slate-800 border-slate-700 text-white"
+                            className="bg-background border-input text-foreground"
                             autoFocus
                         />
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="description" className="text-slate-300">Descrição (opcional)</Label>
+                        <Label htmlFor="description" className="text-muted-foreground">Descrição (opcional)</Label>
                         <Input
                             id="description"
                             placeholder="Ex: Supermercado"
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
-                            className="bg-slate-800 border-slate-700 text-white"
+                            className="bg-background border-input text-foreground"
                         />
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="account" className="text-slate-300">Conta</Label>
+                        <Label htmlFor="account" className="text-muted-foreground">Conta</Label>
                         <Select value={accountId} onValueChange={setAccountId}>
-                            <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
+                            <SelectTrigger className="bg-background border-input text-foreground">
                                 <SelectValue placeholder="Selecione uma conta" />
                             </SelectTrigger>
-                            <SelectContent className="bg-slate-800 border-slate-700">
+                            <SelectContent className="bg-popover border-border">
                                 {accounts.map((account) => (
-                                    <SelectItem key={account.id} value={account.id} className="text-white">
+                                    <SelectItem key={account.id} value={account.id} className="text-foreground">
                                         {account.name}
                                     </SelectItem>
                                 ))}
@@ -162,14 +162,14 @@ export function QuickAddModal({
 
                     {isExpense && (
                         <div className="space-y-2">
-                            <Label htmlFor="category" className="text-slate-300">Categoria</Label>
+                            <Label htmlFor="category" className="text-muted-foreground">Categoria</Label>
                             <Select value={categoryId} onValueChange={setCategoryId}>
-                                <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
+                                <SelectTrigger className="bg-background border-input text-foreground">
                                     <SelectValue placeholder="Selecione uma categoria" />
                                 </SelectTrigger>
-                                <SelectContent className="bg-slate-800 border-slate-700">
+                                <SelectContent className="bg-popover border-border">
                                     {allCategories.map((category) => (
-                                        <SelectItem key={category.id} value={category.id} className="text-white">
+                                        <SelectItem key={category.id} value={category.id} className="text-foreground">
                                             {category.groupName} → {category.name}
                                         </SelectItem>
                                     ))}
@@ -183,14 +183,14 @@ export function QuickAddModal({
                             type="button"
                             variant="ghost"
                             onClick={() => onOpenChange(false)}
-                            className="text-slate-400"
+                            className="text-muted-foreground hover:text-foreground"
                         >
                             Cancelar
                         </Button>
                         <Button
                             type="submit"
                             disabled={loading}
-                            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                            className="bg-gradient-to-r from-primary to-teal-400 hover:from-primary/90 hover:to-teal-500 text-primary-foreground"
                         >
                             {loading ? "Adicionando..." : "Adicionar"}
                         </Button>
