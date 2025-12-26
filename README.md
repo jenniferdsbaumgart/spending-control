@@ -1,36 +1,139 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Spending Control
 
-## Getting Started
+Multi-tenant financial control SaaS for monthly budget management with manual transaction entry.
 
-First, run the development server:
+## Features
+
+- 🏠 **Multi-tenant workspaces** - Invite family members with role-based access (Admin, Editor, Viewer)
+- 📊 **Budget by groups** - Divide income into percentage-based groups (Essentials, Lifestyle, Investments)
+- 💰 **Manual transactions** - Track income and expenses without bank integration
+- 🎯 **Goals (Little Boxes)** - Save for specific objectives with progress tracking
+- 💳 **Installments** - Manage recurring payments from credit card purchases
+- 🌐 **Multi-language** - Portuguese (BR), Spanish, English (US/UK)
+- 💱 **Multi-currency** - BRL, USD, EUR, GBP, ARS, MXN
+
+## Tech Stack
+
+- **Framework**: Next.js 14 (App Router) + TypeScript
+- **Styling**: TailwindCSS + shadcn/ui
+- **Database**: PostgreSQL + Prisma ORM
+- **Auth**: NextAuth.js (Auth.js) with credentials provider
+- **Validation**: Zod
+- **Charts**: Recharts
+- **i18n**: next-intl
+
+## Quick Start
+
+### Prerequisites
+
+- Node.js 18+
+- PostgreSQL database (local or cloud: Supabase, Neon, Railway)
+
+### Setup
+
+1. **Clone and install dependencies**
+
+```bash
+git clone <repo-url>
+cd spending-control
+npm install
+```
+
+2. **Configure environment variables**
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` with your values:
+
+```env
+DATABASE_URL="postgresql://user:password@localhost:5432/spending_control"
+AUTH_SECRET="your-secret-key-here"
+AUTH_URL="http://localhost:3000"
+```
+
+3. **Set up database**
+
+```bash
+npx prisma migrate dev --name init
+npx prisma db seed
+```
+
+4. **Start development server**
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+5. **Open** [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Demo Credentials
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+After seeding:
+- **Email**: demo@example.com
+- **Password**: password123
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+├── app/                    # Next.js App Router pages
+│   ├── (auth)/             # Login, Register pages
+│   ├── (onboarding)/       # Onboarding wizard
+│   └── app/[workspaceId]/  # Protected app pages
+├── components/             # React components
+│   ├── ui/                 # shadcn/ui components
+│   ├── layout/             # Sidebar, Header
+│   ├── dashboard/          # Summary cards, charts
+│   └── ...                 # Feature components
+├── domain/                 # Business logic services
+├── lib/                    # Utilities (date, currency, auth)
+├── server/                 # Server actions & access control
+├── types/                  # TypeScript definitions
+└── messages/               # i18n translation files
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Key Concepts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Budget Groups & Percentages
 
-## Deploy on Vercel
+Users divide their income into groups (e.g., 50% Essentials, 30% Lifestyle, 20% Investments). Monthly snapshots preserve history - changing percentages doesn't affect past months.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Monthly Budget Plan
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+When accessing a month for the first time, the system creates a snapshot of current percentages. This ensures historical data integrity.
+
+### Multi-tenant Scoping
+
+All data is scoped by `workspaceId`. Every query includes workspace validation through the access control layer.
+
+## Deployment
+
+### Vercel (Recommended)
+
+1. Connect your GitHub repo to Vercel
+2. Add environment variables in Vercel dashboard
+3. Deploy
+
+### Docker
+
+```bash
+docker build -t spending-control .
+docker run -p 3000:3000 --env-file .env spending-control
+```
+
+## Scripts
+
+```bash
+npm run dev          # Development server
+npm run build        # Production build
+npm run start        # Production server
+npm run lint         # ESLint
+npx prisma studio    # Database GUI
+npx prisma db seed   # Run seed
+```
+
+## License
+
+MIT
