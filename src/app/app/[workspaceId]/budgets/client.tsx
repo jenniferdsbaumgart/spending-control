@@ -17,8 +17,17 @@ import { Header } from "@/components/layout/header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { ColorPicker } from "@/components/ui/color-picker";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
 import { Plus, ChevronDown, ChevronRight, GripVertical } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -106,13 +115,21 @@ function DroppableGroup({ groupId, children, isOver }: DroppableGroupProps) {
 export function BudgetsClient({ workspaceId, budgetGroups }: BudgetsClientProps) {
     const router = useRouter();
     const [expandedGroups, setExpandedGroups] = useState<Set<string>>(
-        new Set(budgetGroups.map((g) => g.id)) // All expanded by default
+        new Set(budgetGroups.map((g) => g.id))
     );
     const [percentages, setPercentages] = useState<Record<string, number>>(
         Object.fromEntries(budgetGroups.map((g) => [g.id, g.defaultPercent]))
     );
     const [hasChanges, setHasChanges] = useState(false);
     const [activeCategory, setActiveCategory] = useState<CategoryInfo | null>(null);
+
+    // Modal states
+    const [showGroupModal, setShowGroupModal] = useState(false);
+    const [showCategoryModal, setShowCategoryModal] = useState(false);
+    const [newGroupName, setNewGroupName] = useState("");
+    const [newCategoryName, setNewCategoryName] = useState("");
+    const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -165,34 +182,52 @@ export function BudgetsClient({ workspaceId, budgetGroups }: BudgetsClientProps)
         }
     }
 
-    async function handleAddGroup() {
-        const name = prompt("Nome do grupo:");
-        if (!name) return;
+    function openAddGroupModal() {
+        setNewGroupName("");
+        setShowGroupModal(true);
+    }
 
+    async function handleAddGroup() {
+        if (!newGroupName.trim()) return;
+
+        setIsSubmitting(true);
         const result = await createBudgetGroup(workspaceId, {
-            name,
+            name: newGroupName.trim(),
             defaultPercent: 0,
         });
 
+        setIsSubmitting(false);
         if (result.success) {
             toast.success("Grupo criado!");
+            setShowGroupModal(false);
+            setNewGroupName("");
             router.refresh();
         } else {
             toast.error(result.error || "Erro ao criar grupo");
         }
     }
 
-    async function handleAddCategory(groupId: string) {
-        const name = prompt("Nome da categoria:");
-        if (!name) return;
+    function openAddCategoryModal(groupId: string) {
+        setSelectedGroupId(groupId);
+        setNewCategoryName("");
+        setShowCategoryModal(true);
+    }
 
+    async function handleAddCategory() {
+        if (!newCategoryName.trim() || !selectedGroupId) return;
+
+        setIsSubmitting(true);
         const result = await createCategory(workspaceId, {
-            name,
-            groupId,
+            name: newCategoryName.trim(),
+            groupId: selectedGroupId,
         });
 
+        setIsSubmitting(false);
         if (result.success) {
             toast.success("Categoria criada!");
+            setShowCategoryModal(false);
+            setNewCategoryName("");
+            setSelectedGroupId(null);
             router.refresh();
         } else {
             toast.error(result.error || "Erro ao criar categoria");
@@ -215,14 +250,12 @@ export function BudgetsClient({ workspaceId, budgetGroups }: BudgetsClientProps)
         const categoryId = active.id as string;
         const newGroupId = over.id as string;
 
-        // Find current group of the category
         const currentGroup = budgetGroups.find((g) =>
             g.categories.some((c) => c.id === categoryId)
         );
 
         if (!currentGroup || currentGroup.id === newGroupId) return;
 
-        // Check if dropping on a valid group
         const targetGroup = budgetGroups.find((g) => g.id === newGroupId);
         if (!targetGroup) return;
 
@@ -236,158 +269,248 @@ export function BudgetsClient({ workspaceId, budgetGroups }: BudgetsClientProps)
     }
 
     return (
-        <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-        >
-            <div className="flex flex-col h-full">
-                <Header
-                    title="Orçamentos"
-                    actions={
-                        <div className="flex gap-2">
-                            {hasChanges && (
+        <>
+            <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
+            >
+                <div className="flex flex-col h-full">
+                    <Header
+                        title="Orçamentos"
+                        actions={
+                            <div className="flex gap-2">
+                                {hasChanges && (
+                                    <Button
+                                        size="sm"
+                                        onClick={savePercentages}
+                                        className="bg-gradient-to-r from-primary to-teal-400 text-primary-foreground hover:from-primary/90 hover:to-teal-500"
+                                    >
+                                        Salvar alterações
+                                    </Button>
+                                )}
                                 <Button
                                     size="sm"
-                                    onClick={savePercentages}
-                                    className="bg-gradient-to-r from-primary to-teal-400 text-primary-foreground hover:from-primary/90 hover:to-teal-500"
+                                    variant="outline"
+                                    className="border-dashed border-muted-foreground/30 text-muted-foreground hover:bg-muted"
+                                    onClick={openAddGroupModal}
                                 >
-                                    Salvar alterações
+                                    <Plus className="h-4 w-4 mr-1" />
+                                    Novo grupo
                                 </Button>
-                            )}
-                            <Button
-                                size="sm"
-                                variant="outline"
-                                className="border-dashed border-muted-foreground/30 text-muted-foreground hover:bg-muted"
-                                onClick={handleAddGroup}
+                            </div>
+                        }
+                    />
+
+                    <div className="flex-1 p-6 overflow-auto space-y-4">
+                        {totalPercent !== 100 && (
+                            <div
+                                className={cn(
+                                    "px-4 py-3 rounded-lg text-sm",
+                                    totalPercent > 100
+                                        ? "bg-red-500/10 text-red-400 border border-red-500/20"
+                                        : "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                                )}
                             >
-                                <Plus className="h-4 w-4 mr-1" />
-                                Novo grupo
-                            </Button>
+                                Os percentuais somam {totalPercent}%. O ideal é que somem 100%.
+                            </div>
+                        )}
+
+                        <div className="text-sm text-muted-foreground px-1">
+                            💡 Arraste categorias entre grupos para reorganizar. Clique na bolinha colorida para mudar a cor do grupo.
                         </div>
-                    }
-                />
 
-                <div className="flex-1 p-6 overflow-auto space-y-4">
-                    {/* Percent Warning */}
-                    {totalPercent !== 100 && (
-                        <div
-                            className={cn(
-                                "px-4 py-3 rounded-lg text-sm",
-                                totalPercent > 100
-                                    ? "bg-red-500/10 text-red-400 border border-red-500/20"
-                                    : "bg-amber-500/10 text-amber-400 border border-amber-500/20"
-                            )}
-                        >
-                            Os percentuais somam {totalPercent}%. O ideal é que somem 100%.
-                        </div>
-                    )}
+                        {budgetGroups.length === 0 ? (
+                            <Card className="glass-card border-border">
+                                <CardContent className="py-16 text-center">
+                                    <h3 className="text-lg font-medium text-white mb-2">
+                                        Nenhum grupo de orçamento
+                                    </h3>
+                                    <p className="text-muted-foreground mb-6">
+                                        Crie grupos para organizar suas despesas por categoria.
+                                    </p>
+                                    <Button
+                                        onClick={openAddGroupModal}
+                                        className="bg-gradient-to-r from-primary to-teal-400 text-primary-foreground hover:from-primary/90 hover:to-teal-500"
+                                    >
+                                        <Plus className="h-4 w-4 mr-2" />
+                                        Criar grupo
+                                    </Button>
+                                </CardContent>
+                            </Card>
+                        ) : (
+                            budgetGroups.map((group) => {
+                                const isExpanded = expandedGroups.has(group.id);
 
-                    {/* Drag Instructions */}
-                    <div className="text-sm text-muted-foreground px-1">
-                        💡 Arraste categorias entre grupos para reorganizar. Clique na bolinha colorida para mudar a cor do grupo.
-                    </div>
-
-                    {/* Budget Groups */}
-                    {budgetGroups.length === 0 ? (
-                        <Card className="glass-card border-border">
-                            <CardContent className="py-16 text-center">
-                                <h3 className="text-lg font-medium text-white mb-2">
-                                    Nenhum grupo de orçamento
-                                </h3>
-                                <p className="text-muted-foreground mb-6">
-                                    Crie grupos para organizar suas despesas por categoria.
-                                </p>
-                                <Button
-                                    onClick={handleAddGroup}
-                                    className="bg-gradient-to-r from-primary to-teal-400 text-primary-foreground hover:from-primary/90 hover:to-teal-500"
-                                >
-                                    <Plus className="h-4 w-4 mr-2" />
-                                    Criar grupo
-                                </Button>
-                            </CardContent>
-                        </Card>
-                    ) : (
-                        budgetGroups.map((group) => {
-                            const isExpanded = expandedGroups.has(group.id);
-
-                            return (
-                                <Card key={group.id} className="glass-card border-border">
-                                    <CardHeader className="cursor-pointer" onClick={() => toggleGroup(group.id)}>
-                                        <div className="flex items-center justify-between">
-                                            <div className="flex items-center gap-3">
-                                                {isExpanded ? (
-                                                    <ChevronDown className="h-5 w-5 text-muted-foreground" />
-                                                ) : (
-                                                    <ChevronRight className="h-5 w-5 text-muted-foreground" />
-                                                )}
-                                                <div onClick={(e) => e.stopPropagation()}>
-                                                    <ColorPicker
-                                                        color={group.color}
-                                                        onChange={(color) => handleColorChange(group.id, color)}
-                                                    />
-                                                </div>
-                                                <CardTitle className="text-lg text-foreground">{group.name}</CardTitle>
-                                                <Badge variant="outline" className="border-border text-muted-foreground">
-                                                    {group.categories.length} categorias
-                                                </Badge>
-                                            </div>
-                                            <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                                                <Input
-                                                    type="number"
-                                                    value={percentages[group.id] ?? 0}
-                                                    onChange={(e) => updatePercent(group.id, Number(e.target.value))}
-                                                    className="w-20 bg-background/50 border-border text-foreground text-center"
-                                                    min={0}
-                                                    max={100}
-                                                />
-                                                <span className="text-muted-foreground">%</span>
-                                            </div>
-                                        </div>
-                                    </CardHeader>
-                                    {isExpanded && (
-                                        <CardContent className="pt-0">
-                                            <DroppableGroup groupId={group.id}>
-                                                {group.categories.map((category) => (
-                                                    <DraggableCategory
-                                                        key={category.id}
-                                                        category={category}
-                                                        groupColor={group.color}
-                                                    />
-                                                ))}
-                                                {group.categories.length === 0 && (
-                                                    <div className="py-4 text-center text-muted-foreground text-sm border-2 border-dashed border-border rounded-lg">
-                                                        Arraste categorias aqui
+                                return (
+                                    <Card key={group.id} className="glass-card border-border">
+                                        <CardHeader className="cursor-pointer" onClick={() => toggleGroup(group.id)}>
+                                            <div className="flex items-center justify-between">
+                                                <div className="flex items-center gap-3">
+                                                    {isExpanded ? (
+                                                        <ChevronDown className="h-5 w-5 text-muted-foreground" />
+                                                    ) : (
+                                                        <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                                                    )}
+                                                    <div onClick={(e) => e.stopPropagation()}>
+                                                        <ColorPicker
+                                                            color={group.color}
+                                                            onChange={(color) => handleColorChange(group.id, color)}
+                                                        />
                                                     </div>
-                                                )}
-                                            </DroppableGroup>
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                className="w-full mt-2 text-muted-foreground hover:text-foreground"
-                                                onClick={() => handleAddCategory(group.id)}
-                                            >
-                                                <Plus className="h-4 w-4 mr-1" />
-                                                Adicionar categoria
-                                            </Button>
-                                        </CardContent>
-                                    )}
-                                </Card>
-                            );
-                        })
-                    )}
-                </div>
-            </div>
-
-            {/* Drag Overlay */}
-            <DragOverlay>
-                {activeCategory ? (
-                    <div className="py-2 px-4 rounded-lg bg-primary/20 border border-primary shadow-xl">
-                        <span className="text-foreground font-medium">{activeCategory.name}</span>
+                                                    <CardTitle className="text-lg text-foreground">{group.name}</CardTitle>
+                                                    <Badge variant="outline" className="border-border text-muted-foreground">
+                                                        {group.categories.length} categorias
+                                                    </Badge>
+                                                </div>
+                                                <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                                                    <Input
+                                                        type="number"
+                                                        value={percentages[group.id] ?? 0}
+                                                        onChange={(e) => updatePercent(group.id, Number(e.target.value))}
+                                                        className="w-20 bg-background/50 border-border text-foreground text-center"
+                                                        min={0}
+                                                        max={100}
+                                                    />
+                                                    <span className="text-muted-foreground">%</span>
+                                                </div>
+                                            </div>
+                                        </CardHeader>
+                                        {isExpanded && (
+                                            <CardContent className="pt-0">
+                                                <DroppableGroup groupId={group.id}>
+                                                    {group.categories.map((category) => (
+                                                        <DraggableCategory
+                                                            key={category.id}
+                                                            category={category}
+                                                            groupColor={group.color}
+                                                        />
+                                                    ))}
+                                                    {group.categories.length === 0 && (
+                                                        <div className="py-4 text-center text-muted-foreground text-sm border-2 border-dashed border-border rounded-lg">
+                                                            Arraste categorias aqui
+                                                        </div>
+                                                    )}
+                                                </DroppableGroup>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="w-full mt-2 text-muted-foreground hover:text-foreground"
+                                                    onClick={() => openAddCategoryModal(group.id)}
+                                                >
+                                                    <Plus className="h-4 w-4 mr-1" />
+                                                    Adicionar categoria
+                                                </Button>
+                                            </CardContent>
+                                        )}
+                                    </Card>
+                                );
+                            })
+                        )}
                     </div>
-                ) : null}
-            </DragOverlay>
-        </DndContext>
+                </div>
+
+                <DragOverlay>
+                    {activeCategory ? (
+                        <div className="py-2 px-4 rounded-lg bg-primary/20 border border-primary shadow-xl">
+                            <span className="text-foreground font-medium">{activeCategory.name}</span>
+                        </div>
+                    ) : null}
+                </DragOverlay>
+            </DndContext>
+
+            {/* Add Group Modal */}
+            <Dialog open={showGroupModal} onOpenChange={setShowGroupModal}>
+                <DialogContent className="bg-background border-border">
+                    <DialogHeader>
+                        <DialogTitle className="text-foreground">Novo Grupo de Orçamento</DialogTitle>
+                        <DialogDescription className="text-muted-foreground">
+                            Crie um grupo para organizar suas categorias de despesas.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="groupName" className="text-foreground">Nome do grupo</Label>
+                            <Input
+                                id="groupName"
+                                placeholder="Ex: Essenciais, Lazer, Investimentos..."
+                                value={newGroupName}
+                                onChange={(e) => setNewGroupName(e.target.value)}
+                                className="bg-background/50 border-border text-foreground"
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter" && newGroupName.trim()) {
+                                        handleAddGroup();
+                                    }
+                                }}
+                                autoFocus
+                            />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button
+                            variant="outline"
+                            onClick={() => setShowGroupModal(false)}
+                            className="border-border text-muted-foreground"
+                        >
+                            Cancelar
+                        </Button>
+                        <Button
+                            onClick={handleAddGroup}
+                            disabled={!newGroupName.trim() || isSubmitting}
+                            className="bg-gradient-to-r from-primary to-teal-400 text-primary-foreground"
+                        >
+                            {isSubmitting ? "Criando..." : "Criar grupo"}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Add Category Modal */}
+            <Dialog open={showCategoryModal} onOpenChange={setShowCategoryModal}>
+                <DialogContent className="bg-background border-border">
+                    <DialogHeader>
+                        <DialogTitle className="text-foreground">Nova Categoria</DialogTitle>
+                        <DialogDescription className="text-muted-foreground">
+                            Adicione uma categoria para classificar suas transações.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="categoryName" className="text-foreground">Nome da categoria</Label>
+                            <Input
+                                id="categoryName"
+                                placeholder="Ex: Alimentação, Transporte, Streaming..."
+                                value={newCategoryName}
+                                onChange={(e) => setNewCategoryName(e.target.value)}
+                                className="bg-background/50 border-border text-foreground"
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter" && newCategoryName.trim()) {
+                                        handleAddCategory();
+                                    }
+                                }}
+                                autoFocus
+                            />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button
+                            variant="outline"
+                            onClick={() => setShowCategoryModal(false)}
+                            className="border-border text-muted-foreground"
+                        >
+                            Cancelar
+                        </Button>
+                        <Button
+                            onClick={handleAddCategory}
+                            disabled={!newCategoryName.trim() || isSubmitting}
+                            className="bg-gradient-to-r from-primary to-teal-400 text-primary-foreground"
+                        >
+                            {isSubmitting ? "Criando..." : "Criar categoria"}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+        </>
     );
 }
