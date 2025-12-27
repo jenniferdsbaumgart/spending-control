@@ -226,26 +226,14 @@ export function QuickAddModal({
 
                     {isIncome && (
                         <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                                <Label htmlFor="incomeCategory" className="text-muted-foreground">
-                                    Categoria de Receita
-                                </Label>
-                                <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => setShowNewCategoryInput(!showNewCategoryInput)}
-                                    className="text-xs text-muted-foreground hover:text-foreground"
-                                >
-                                    <Plus className="h-3 w-3 mr-1" />
-                                    Nova
-                                </Button>
-                            </div>
+                            <Label htmlFor="incomeCategory" className="text-muted-foreground">
+                                Categoria de Receita
+                            </Label>
 
                             {showNewCategoryInput ? (
                                 <div className="flex gap-2">
                                     <Input
-                                        placeholder="Nome da categoria"
+                                        placeholder="Nome da nova categoria"
                                         value={newCategoryName}
                                         onChange={(e) => setNewCategoryName(e.target.value)}
                                         className="bg-background border-input text-foreground"
@@ -254,7 +242,12 @@ export function QuickAddModal({
                                                 e.preventDefault();
                                                 handleCreateIncomeCategory();
                                             }
+                                            if (e.key === "Escape") {
+                                                setShowNewCategoryInput(false);
+                                                setNewCategoryName("");
+                                            }
                                         }}
+                                        autoFocus
                                     />
                                     <Button
                                         type="button"
@@ -265,33 +258,107 @@ export function QuickAddModal({
                                     >
                                         Criar
                                     </Button>
+                                    <Button
+                                        type="button"
+                                        size="sm"
+                                        variant="ghost"
+                                        onClick={() => {
+                                            setShowNewCategoryInput(false);
+                                            setNewCategoryName("");
+                                        }}
+                                        className="text-muted-foreground"
+                                    >
+                                        Cancelar
+                                    </Button>
                                 </div>
                             ) : (
-                                <Select value={incomeCategoryId} onValueChange={setIncomeCategoryId}>
+                                <Select value={incomeCategoryId} onValueChange={(value) => {
+                                    if (value === "__new__") {
+                                        setShowNewCategoryInput(true);
+                                    } else {
+                                        setIncomeCategoryId(value);
+                                    }
+                                }}>
                                     <SelectTrigger className="bg-background border-input text-foreground">
                                         <SelectValue placeholder="Selecione uma categoria (opcional)" />
                                     </SelectTrigger>
                                     <SelectContent className="bg-popover border-border">
-                                        {incomeCategories.length === 0 ? (
-                                            <div className="p-2 text-sm text-muted-foreground text-center">
-                                                Nenhuma categoria. Clique em &quot;Nova&quot; para criar.
-                                            </div>
-                                        ) : (
-                                            incomeCategories.map((category) => (
-                                                <SelectItem key={category.id} value={category.id} className="text-foreground">
-                                                    <span className="flex items-center gap-2">
-                                                        {category.icon && <span>{category.icon}</span>}
-                                                        {category.color && (
-                                                            <span
-                                                                className="w-2 h-2 rounded-full"
-                                                                style={{ backgroundColor: category.color }}
-                                                            />
-                                                        )}
-                                                        {category.name}
-                                                    </span>
-                                                </SelectItem>
-                                            ))
-                                        )}
+                                        {/* Default income categories */}
+                                        <SelectItem value="income-salary" className="text-foreground">
+                                            <span className="flex items-center gap-2">
+                                                <span>💼</span>
+                                                <span className="w-2 h-2 rounded-full bg-green-500" />
+                                                Salário
+                                            </span>
+                                        </SelectItem>
+                                        <SelectItem value="income-freelance" className="text-foreground">
+                                            <span className="flex items-center gap-2">
+                                                <span>💻</span>
+                                                <span className="w-2 h-2 rounded-full bg-blue-500" />
+                                                Freelance
+                                            </span>
+                                        </SelectItem>
+                                        <SelectItem value="income-investments" className="text-foreground">
+                                            <span className="flex items-center gap-2">
+                                                <span>📈</span>
+                                                <span className="w-2 h-2 rounded-full bg-purple-500" />
+                                                Investimentos
+                                            </span>
+                                        </SelectItem>
+                                        <SelectItem value="income-gift" className="text-foreground">
+                                            <span className="flex items-center gap-2">
+                                                <span>🎁</span>
+                                                <span className="w-2 h-2 rounded-full bg-pink-500" />
+                                                Presente
+                                            </span>
+                                        </SelectItem>
+                                        <SelectItem value="income-refund" className="text-foreground">
+                                            <span className="flex items-center gap-2">
+                                                <span>↩️</span>
+                                                <span className="w-2 h-2 rounded-full bg-orange-500" />
+                                                Reembolso
+                                            </span>
+                                        </SelectItem>
+                                        <SelectItem value="income-bonus" className="text-foreground">
+                                            <span className="flex items-center gap-2">
+                                                <span>🏆</span>
+                                                <span className="w-2 h-2 rounded-full bg-yellow-500" />
+                                                Bônus
+                                            </span>
+                                        </SelectItem>
+                                        <SelectItem value="income-other" className="text-foreground">
+                                            <span className="flex items-center gap-2">
+                                                <span>📦</span>
+                                                <span className="w-2 h-2 rounded-full bg-gray-500" />
+                                                Outros
+                                            </span>
+                                        </SelectItem>
+
+                                        {/* User-created categories */}
+                                        {incomeCategories.filter(c => !c.id.startsWith("income-")).map((category) => (
+                                            <SelectItem key={category.id} value={category.id} className="text-foreground">
+                                                <span className="flex items-center gap-2">
+                                                    {category.icon && <span>{category.icon}</span>}
+                                                    {category.color && (
+                                                        <span
+                                                            className="w-2 h-2 rounded-full"
+                                                            style={{ backgroundColor: category.color }}
+                                                        />
+                                                    )}
+                                                    {category.name}
+                                                </span>
+                                            </SelectItem>
+                                        ))}
+
+                                        {/* Create new option */}
+                                        <div className="border-t border-border mt-1 pt-1">
+                                            <SelectItem value="__new__" className="text-primary">
+                                                <span className="flex items-center gap-2">
+                                                    <Plus className="h-4 w-4" />
+                                                    Nova categoria...
+                                                </span>
+                                            </SelectItem>
+                                        </div>
                                     </SelectContent>
                                 </Select>
                             )}
