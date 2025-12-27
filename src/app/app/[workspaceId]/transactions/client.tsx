@@ -565,12 +565,13 @@ export function TransactionsClient({
                                             </div>
                                             <div>
                                                 <p className="text-foreground font-medium">
-                                                    {transaction.description || transaction.category?.name || "Sem descrição"}
+                                                    {transaction.description || transaction.category?.name || transaction.incomeCategory?.name || "Sem descrição"}
                                                 </p>
                                                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                                     <span>{formatDate(transaction.date, "dd MMM yyyy")}</span>
                                                     <span>•</span>
                                                     <span>{transaction.account.name}</span>
+                                                    {/* Expense category */}
                                                     {transaction.category && (
                                                         <>
                                                             <span>•</span>
@@ -582,6 +583,24 @@ export function TransactionsClient({
                                                                     />
                                                                 )}
                                                                 {transaction.category.name}
+                                                            </span>
+                                                        </>
+                                                    )}
+                                                    {/* Income category */}
+                                                    {transaction.incomeCategory && (
+                                                        <>
+                                                            <span>•</span>
+                                                            <span className="flex items-center gap-1">
+                                                                {transaction.incomeCategory.icon && (
+                                                                    <span>{transaction.incomeCategory.icon}</span>
+                                                                )}
+                                                                {transaction.incomeCategory.color && (
+                                                                    <span
+                                                                        className="w-2 h-2 rounded-full"
+                                                                        style={{ backgroundColor: transaction.incomeCategory.color }}
+                                                                    />
+                                                                )}
+                                                                {transaction.incomeCategory.name}
                                                             </span>
                                                         </>
                                                     )}
